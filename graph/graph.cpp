@@ -1,14 +1,42 @@
 #include "graph.h"
 #include <cstring>
+#include <stack>
+#include <deque>
+#include <iostream>
 
 #define return_fail(cond, ret) \
     if(!(cond)) { \
         return ret; \
     }
 
+#define DEL(p) do{delete (p);p = nullptr;}while(0)
+
 Graph::Graph()
 {
 
+}
+
+Graph::~Graph()
+{
+    for(int i = 0;i < m_nsize;++i)
+    {
+        VNode* t = m_node[i];
+        ENode* l = t->i_enode;
+        ENode* r = t->o_enode;
+        while(l)
+        {
+            ENode* tmp = l->next;
+            DEL(l);
+            l = tmp;
+        }
+        while(r)
+        {
+            ENode* tmp = r->next;
+            DEL(r);
+            r = tmp;
+        }
+        DEL(t);
+    }
 }
 
 void Graph::setNodeSize(int nsize)
@@ -17,7 +45,7 @@ void Graph::setNodeSize(int nsize)
     memset(m_node, 0, sizeof(VNode*) * 100);
     for(int i = 0;i < nsize;++i)
     {
-        m_node[i] = newVNode(i);
+        m_node[i] = _new_vnode_(i);
     }
 }
 
@@ -57,7 +85,74 @@ int Graph::getNodeOud(int id)
     return count;
 }
 
-VNode *Graph::newVNode(int id)
+void Graph::dfs()
+{
+    bool visited[100] = {false};
+    std::stack<int> defer_node;
+    defer_node.push(0);
+
+    while(!defer_node.empty())
+    {
+        int cid = defer_node.top();
+
+        if(!visited[cid])
+        {
+            visited[cid] = true;
+            std::cout << "current visit node:" << cid << std::endl;
+        }
+
+        if(_chirdren_visited_(m_node[cid], visited))
+        {
+            defer_node.pop();
+        }
+        else
+        {
+            ENode* t = m_node[cid]->o_enode;
+            while(t)
+            {
+                if(visited[t->id])
+                {
+                    t = t->next;
+                    continue;
+                }
+
+                break;
+            }
+            if(t)
+            {
+                defer_node.push(t->id);
+            }
+        }
+    }
+}
+
+void Graph::bfs()
+{
+    bool visited[100] = {false};
+    std::deque<int> defer_node;
+    defer_node.push_front(0);
+
+    while(!defer_node.empty())
+    {
+        int cid = defer_node.front();
+        visited[cid] = true;
+        defer_node.pop_front();
+        std::cout << "current visit node:" << cid << std::endl;
+        ENode* vn = m_node[cid]->o_enode;
+        while(vn)
+        {
+            if(!visited[vn->id])
+            {
+                visited[vn->id] = true;
+                defer_node.push_back(vn->id);
+            }
+
+            vn = vn->next;
+        }
+    }
+}
+
+VNode *Graph::_new_vnode_(int id)
 {
     VNode* n = new VNode;
     memset(n, 0, sizeof(VNode));
@@ -67,7 +162,7 @@ VNode *Graph::newVNode(int id)
     return n;
 }
 
-ENode *Graph::newENode(int id)
+ENode *Graph::_new_enode_(int id)
 {
     ENode* n = new ENode;
     memset(n, 0, sizeof(n));
@@ -75,6 +170,21 @@ ENode *Graph::newENode(int id)
     n->next = nullptr;
 
     return n;
+}
+
+bool Graph::_chirdren_visited_(VNode *n, bool *visited)
+{
+    ENode* t = n->o_enode;
+    while(t)
+    {
+        if(!visited[t->id])
+        {
+            return false;
+        }
+        t = t->next;
+    }
+
+    return true;
 }
 
 void Graph::_add_edge(const Edge &e)
@@ -88,11 +198,11 @@ void Graph::_add_edge(const Edge &e)
 
     if(!t)
     {
-        m_node[e.id_from]->o_enode = newENode(e.id_to);
+        m_node[e.id_from]->o_enode = _new_enode_(e.id_to);
     }
     else
     {
-        t->next = newENode(e.id_to);
+        t->next = _new_enode_(e.id_to);
     }
 
     m = m_node[e.id_to];
@@ -104,11 +214,11 @@ void Graph::_add_edge(const Edge &e)
 
     if(!t)
     {
-        m_node[e.id_to]->i_enode = newENode(e.id_from);
+        m_node[e.id_to]->i_enode = _new_enode_(e.id_from);
     }
     else
     {
-        t->next = newENode(e.id_from);
+        t->next = _new_enode_(e.id_from);
     }
 }
 
