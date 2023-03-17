@@ -1,6 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "information.h"
+#include "scantypeselector.h"
+#include "udefdialog.h"
+#include <QLabel>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -27,4 +30,18 @@ void MainWindow::on_pushButton_2_clicked(bool)
 void MainWindow::on_pushButton_3_clicked(bool)
 {
     Prompt::error();
+}
+
+void MainWindow::on_pushButton_4_clicked()
+{
+    ScanTypeSelector* scan = new ScanTypeSelector();
+    scan->show();
+}
+
+void MainWindow::on_pushButton_5_clicked()
+{
+    udefDialog* dlg = new udefDialog(this);
+    ScanTypeSelector* scan = new ScanTypeSelector();
+    dlg->setCenterWidget(scan);
+    dlg->show();
 }

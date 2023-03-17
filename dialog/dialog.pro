@@ -26,15 +26,24 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    information.cpp
+    information.cpp \
+    scantypeselector.cpp \
+    scanwait.cpp \
+    udefdialog.cpp
 
 HEADERS += \
         mainwindow.h \
-    information.h
+    information.h \
+    scantypeselector.h \
+    scanwait.h \
+    udefdialog.h
 
 FORMS += \
+    ScanDialog.ui \
         mainwindow.ui \
-    information.ui
+    information.ui \
+    scantypeselector.ui \
+    udefdialog.ui
 
 RESOURCES += \
     tools.qrc

@@ -3,5 +3,9 @@
         <file>icons/confirm.png</file>
         <file>icons/error.png</file>
         <file>icons/warn.png</file>
+        <file>icons/pause.png</file>
+        <file>icons/close.png</file>
+        <file>icons/maximize.png</file>
+        <file>icons/minimize.png</file>
     </qresource>
 </RCC>
